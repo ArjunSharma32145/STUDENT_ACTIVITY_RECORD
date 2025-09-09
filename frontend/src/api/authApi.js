@@ -6,20 +6,32 @@ const API = axios.create({
 
 // Register
 export const register = async (data) => {
-  const res = await API.post("/register", data);
-  return res.data;
+  try {
+    const res = await API.post("/register", data);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
 };
 
 // Login
 export const login = async (data) => {
-  const res = await API.post("/login", data);
-  return res.data;
+  try {
+    const res = await API.post("/login", data);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
 };
 
 // Get current user
 export const getCurrentUser = async (token) => {
-  const res = await API.get("/me", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.data;
+  try {
+    const res = await API.get("/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
 };

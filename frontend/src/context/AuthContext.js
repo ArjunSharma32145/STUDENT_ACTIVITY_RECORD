@@ -5,6 +5,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem("token"));
 
   useEffect(() => {
@@ -12,24 +13,21 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           const data = await getCurrentUser(token);
-          setUser(data);
+          setUser(data.data);
         } catch (err) {
+          console.error("Failed to fetch user:", err);
           logout();
         }
       }
+      setLoading(false);
     };
     fetchUser();
   }, [token]);
 
   const login = (data) => {
-    localStorage.setItem("token", data.token);
-    setToken(data.token);
-    setUser({
-      _id: data._id,
-      name: data.name,
-      email: data.email,
-      role: data.role,
-    });
+    localStorage.setItem("token", data.data.token);
+    setToken(data.data.token);
+    setUser(data.data);
   };
 
   const logout = () => {
@@ -39,7 +37,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
